@@ -24,7 +24,7 @@ $delete_stmt = $conn->prepare("DELETE FROM meetings WHERE meeting_id = ? AND tea
 $delete_stmt->bind_param("ii", $meeting_id, $_SESSION['team_id']);
 
 if ($delete_stmt->execute()) {
-    $_SESSION['success_message'] = "Meeting deleted successfully!";
+    $_SESSION['success_message'] = "Meeting ended successfully!";
 } else {
     $_SESSION['error_message'] = "Error deleting meeting: " . $conn->error;
 }

@@ -1,69 +1,4 @@
 <?php
-// session_start();
-// require '../includes/db_connect.php';
-
-// if ($_SESSION['role'] != 'HR') {
-//     header("Location: error.php");
-//     exit;
-// }
-
-// if (isset($_GET['edit'])) {
-//     $user_id = $_GET['edit'];
-
-//     // Fetch user data for editing
-//     $stmt = $conn->prepare("SELECT * FROM users WHERE user_id = ?");
-//     $stmt->bind_param("i", $user_id);
-//     $stmt->execute();
-//     $user = $stmt->get_result()->fetch_assoc();
-//     $stmt->close();
-
-//     // Handle user update
-//     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-//         $username = $_POST['username'];
-//         $email = $_POST['email'];
-//         $role = $_POST['role'];
-//         $password = $_POST['password'] ? password_hash($_POST['password'], PASSWORD_DEFAULT) : $user['password'];
-
-//         $update_stmt = $conn->prepare("UPDATE users SET username = ?, email = ?, role = ?, password = ? WHERE user_id = ?");
-//         $update_stmt->bind_param("ssssi", $username, $email, $role, $password, $user_id);
-//         $update_stmt->execute();
-//         $update_stmt->close();
-
-//         header("Location: hr_panel.php");
-//         exit;
-//     }
-// } elseif (isset($_GET['delete'])) {
-//     $user_id = $_GET['delete'];
-
-//     // Delete user
-//     $delete_stmt = $conn->prepare("DELETE FROM users WHERE user_id = ?");
-//     $delete_stmt->bind_param("i", $user_id);
-//     $delete_stmt->execute();
-//     $delete_stmt->close();
-
-//     header("Location: hr_panel.php");
-//     exit;
-// } elseif (isset($_POST['create'])) {
-//     // Handle user creation
-//     $username = $_POST['username'];
-//     $email = $_POST['email'];
-//     $role = $_POST['role'];
-//     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-
-//     // Insert new user into database
-//     $create_stmt = $conn->prepare("INSERT INTO users (username, email, role, password) VALUES (?, ?, ?, ?)");
-//     $create_stmt->bind_param("ssss", $username, $email, $role, $password);
-//     $create_stmt->execute();
-//     $create_stmt->close();
-
-//     // Set session variable for successful user creation
-//     $_SESSION['user_creation_success'] = true;
-
-//     header("Location: ../pages/hr_panel.php");
-//     exit;
-// }
-?>
-<?php
 session_start();
 require '../includes/db_connect.php';
 
@@ -81,6 +16,7 @@ if (isset($_POST['create'])) {
     $role = $_POST['role'];
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
     
+    // Removed domain from the INSERT query
     $stmt = $conn->prepare("INSERT INTO users (username, email, role, password) VALUES (?, ?, ?, ?)");
     $stmt->bind_param("ssss", $username, $email, $role, $password);
     
@@ -103,12 +39,12 @@ if (isset($_POST['update'])) {
     $role = $_POST['role'];
     
     if (!empty($_POST['password'])) {
-        // Update with new password
+        // Update with new password (removed domain)
         $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
         $stmt = $conn->prepare("UPDATE users SET username=?, email=?, role=?, password=? WHERE user_id=?");
         $stmt->bind_param("ssssi", $username, $email, $role, $password, $user_id);
     } else {
-        // Update without changing password
+        // Update without changing password (removed domain)
         $stmt = $conn->prepare("UPDATE users SET username=?, email=?, role=? WHERE user_id=?");
         $stmt->bind_param("sssi", $username, $email, $role, $user_id);
     }

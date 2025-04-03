@@ -4,8 +4,6 @@ require_once '../includes/db_connect.php';
 
 // Check if user is HR
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'HR') {
-    // header("Location: login.php");
-    // exit();
     echo "<script>window.location.href = 'error.php';</script>";
 }
 
@@ -74,163 +72,517 @@ $total_not_viewed = array_sum(array_column($performance_data, 'not_viewed_tasks'
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Team Performance Analysis</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        .performance-card {
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4895ef;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --success-color: #4dd4ac;
+            --warning-color: #ffbe0b;
+            --danger-color: #ff5a5f;
+            --neutral-color: #6c757d;
+            --gradient-start: #4361ee;
+            --gradient-end: #3a0ca3;
         }
-        .performance-card:hover {
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .navbar {
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            background-color: white;
+        }
+        
+        .page-header {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: white;
+            padding: 3.5rem 0;  /* Increased from 2.5rem to 3.5rem */
+            border-radius: 0 0 25px 25px;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dashboard-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            height: 100%;
+        }
+        
+        .dashboard-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
         }
+        
+        .card-header {
+            background: white;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            font-weight: 600;
+            padding: 1rem 1.5rem;
+        }
+        
+        .metric-card {
+            text-align: center;
+            padding: 1.5rem;
+        }
+        
+        .metric-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
         .metric-value {
-            font-size: 24px;
-            font-weight: bold;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--dark-color);
         }
+        
+        .metric-label {
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--neutral-color);
+            letter-spacing: 1px;
+        }
+        
         .filter-section {
-            background-color: #f8f9fa;
-            padding: 20px;
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .form-select, .form-control {
             border-radius: 10px;
-            margin-bottom: 30px;
+            padding: 0.75rem 1rem;
+            border: 1px solid rgba(0, 0, 0, 0.1);
         }
+        
+        .btn {
+            border-radius: 10px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--gradient-end), var(--gradient-start));
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+        }
+        
+        .btn-secondary {
+            background-color: white;
+            color: var(--dark-color);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-secondary:hover {
+            background-color: var(--light-color);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+        }
+        
+        .btn-info {
+            background-color: var(--accent-color);
+            border: none;
+            color: white;
+        }
+        
+        .btn-info:hover {
+            background-color: #3a7fc1;
+            color: white;
+        }
+        
+        .table {
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        
+        .table thead th {
+            background-color: rgba(243, 246, 249, 0.6);
+            color: var(--neutral-color);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            padding: 1.2rem 1rem;
+            border: none;
+        }
+        
+        .table tbody td {
+            padding: 1.2rem 1rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            vertical-align: middle;
+        }
+        
         .table-hover tbody tr:hover {
-            background-color: rgba(0,0,0,.05);
+            background-color: rgba(243, 246, 249, 0.8);
         }
+        
         .performance-score {
-            font-weight: bold;
-            padding: 4px 8px;
-            border-radius: 4px;
+            font-weight: 700;
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            display: inline-block;
+            min-width: 80px;
+            text-align: center;
         }
+        
         .score-high {
-            background-color: rgba(40, 167, 69, 0.2);
-            color: #28a745;
+            background-color: rgba(96, 98, 196, 0.15);        /* Verified - Purple (100) */
+            color: rgba(96, 98, 196, 1);
         }
+        
         .score-medium {
-            background-color: rgba(255, 193, 7, 0.2);
-            color: #ffc107;
+            background-color: rgba(4, 113, 77, 0.15);         /* Completed - Green (>=75) */
+            color: rgba(4, 113, 77, 1);
         }
+        
         .score-low {
-            background-color: rgba(220, 53, 69, 0.2);
-            color: #dc3545;
+            background-color: rgba(59, 130, 246, 0.15);      /* In Progress - Blue (>=50) */
+            color: rgba(59, 130, 246, 1);
+        }
+        
+        .score-lowest {
+            background-color: rgba(234, 179, 8, 0.15);       /* In Study - Yellow (>=25) */
+            color: rgba(234, 179, 8, 1);
+        }
+        
+        .score-zero {
+            background-color: rgba(227, 22, 22, 0.15);       /* Not Viewed - Red (0) */
+            color: rgba(227, 22, 22, 1);
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 350px;
+            padding: 1rem;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        
+        /* Responsive fixes */
+        @media (max-width: 768px) {
+            .metric-value {
+                font-size: 1.8rem;
+            }
+            
+            .chart-container {
+                height: 300px;
+            }
+        }
+        /* Enhanced table styling */
+        .table-container {
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        
+        .table {
+            margin-bottom: 0;
+        }
+        
+        .table thead {
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.1), rgba(58, 12, 163, 0.1));
+        }
+        
+        .table thead th {
+            color: #2d3748;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 1.2px;
+            padding: 1rem 1.5rem;
+            border: none;
+            white-space: nowrap;
+        }
+        
+        .table tbody td {
+            padding: 1.2rem 1.5rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            vertical-align: middle;
+            font-size: 0.95rem;
+        }
+        
+        .table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .table-hover tbody tr:hover {
+            background-color: rgba(67, 97, 238, 0.02);
+            transition: all 0.2s ease;
+        }
+        
+        .avatar-initials {
+            width: 40px !important;
+            height: 40px !important;
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.1), rgba(58, 12, 163, 0.1));
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            transition: all 0.2s ease;
+        }
+        
+        tr:hover .avatar-initials {
+            transform: scale(1.05);
+        }
+        
+        .username-cell {
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .metric-cell {
+            font-variant-numeric: tabular-nums;
+            font-weight: 500;
+        }
+        
+        .btn-details {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--accent-color), #3a7fc1);
+            border: none;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-details:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(72, 149, 239, 0.2);
         }
     </style>
 </head>
 <body>
-    <div class="container-fluid py-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1>Team Performance Analysis</h1>
-            <a href="hr_dashboard.php" class="btn btn-secondary">Back to Dashboard</a>
-        </div>
+   
 
-        <!-- Filter Section -->
-        <div class="filter-section">
-            <form method="GET" class="row align-items-center">
-                <div class="col-auto">
-                    <label class="me-2">Time Period:</label>
-                    <select name="period" class="form-select" onchange="this.form.submit()">
-                        <option value="1month" <?php echo $period == '1month' ? 'selected' : ''; ?>>Last Month</option>
-                        <option value="3months" <?php echo $period == '3months' ? 'selected' : ''; ?>>Last 3 Months</option>
-                        <option value="6months" <?php echo $period == '6months' ? 'selected' : ''; ?>>Last 6 Months</option>
-                        <option value="1year" <?php echo $period == '1year' ? 'selected' : ''; ?>>Last Year</option>
-                    </select>
+    <!-- Page Header -->
+    <header class="page-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="fw-bold mb-2">Team Performance Analysis</h1>
+                    <p class="mb-0 opacity-75">Track, measure, and optimize your team's productivity</p>
                 </div>
-                <div class="col-auto">
-                    <button type="button" class="btn btn-primary" onclick="exportReport()">Export Report</button>
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                    <div class="d-flex gap-2 justify-content-md-end">
+                        <button type="button" class="btn btn-light" onclick="exportReport()">
+                            <i class="fas fa-file-export me-2"></i>Export Report
+                        </button>
+                        <a href="hr_dashboard.php" class="btn btn-light">
+                            <i class="fas fa-home me-2"></i>Back to Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container py-4">
+        <!-- Filter Section -->
+        <div class="filter-section mb-4">
+            <form method="GET" class="row align-items-center">
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <label class="form-label fw-bold">Time Period</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white">
+                            <i class="far fa-calendar-alt"></i>
+                        </span>
+                        <select name="period" class="form-select" onchange="this.form.submit()">
+                            <option value="1month" <?php echo $period == '1month' ? 'selected' : ''; ?>>Last Month</option>
+                            <option value="3months" <?php echo $period == '3months' ? 'selected' : ''; ?>>Last 3 Months</option>
+                            <option value="6months" <?php echo $period == '6months' ? 'selected' : ''; ?>>Last 6 Months</option>
+                            <option value="1year" <?php echo $period == '1year' ? 'selected' : ''; ?>>Last Year</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-8 text-md-end">
+                    <p class="text-muted mb-0">
+                        Showing data from <?php echo date('M d, Y', strtotime($start_date)); ?> to <?php echo date('M d, Y', strtotime($current_date)); ?>
+                    </p>
                 </div>
             </form>
         </div>
 
         <!-- Summary Cards -->
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="card performance-card">
-                    <div class="card-body">
-                        <h5 class="card-title">Total Team Members</h5>
-                        <p class="metric-value"><?php echo count($performance_data); ?></p>
+        <div class="row g-4 mb-4">
+            <div class="col-md-3 col-sm-6">
+                <div class="dashboard-card">
+                    <div class="metric-card">
+                        <div class="metric-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="metric-value"><?php echo count($performance_data); ?></div>
+                        <div class="metric-label">Team Members</div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card performance-card">
-                    <div class="card-body">
-                        <h5 class="card-title">Verified Tasks</h5>
-                        <p class="metric-value"><?php echo $total_verified; ?></p>
+            <div class="col-md-3 col-sm-6">
+                <div class="dashboard-card">
+                    <div class="metric-card">
+                        <div class="metric-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="metric-value"><?php echo $total_verified; ?></div>
+                        <div class="metric-label">Verified Tasks</div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card performance-card">
-                    <div class="card-body">
-                        <h5 class="card-title">Tasks In Progress</h5>
-                        <p class="metric-value"><?php echo $total_in_progress; ?></p>
+            <div class="col-md-3 col-sm-6">
+                <div class="dashboard-card">
+                    <div class="metric-card">
+                        <div class="metric-icon">
+                            <i class="fas fa-spinner"></i>
+                        </div>
+                        <div class="metric-value"><?php echo $total_in_progress; ?></div>
+                        <div class="metric-label">Tasks In Progress</div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card performance-card">
-                    <div class="card-body">
-                        <h5 class="card-title">Tasks Under Study</h5>
-                        <p class="metric-value"><?php echo $total_in_study; ?></p>
+            <div class="col-md-3 col-sm-6">
+                <div class="dashboard-card">
+                    <div class="metric-card">
+                        <div class="metric-icon">
+                            <i class="fas fa-book-open"></i>
+                        </div>
+                        <div class="metric-value"><?php echo $total_in_study; ?></div>
+                        <div class="metric-label">Tasks Under Study</div>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Charts -->
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <div class="card performance-card">
+        <div class="row g-4 mb-4">
+            <div class="col-lg-7">
+                <div class="dashboard-card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Performance Scores</h5>
+                        <button class="btn btn-sm btn-light" type="button" disabled>
+                            <i class="fas fa-expand-alt me-1"></i>
+                        </button>
+                    </div>
                     <div class="card-body">
-                        <canvas id="performanceChart"></canvas>
+                        <div class="chart-container">
+                            <canvas id="performanceChart"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="card performance-card">
+            <div class="col-lg-5">
+                <div class="dashboard-card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Task Status Distribution</h5>
+                        <button class="btn btn-sm btn-light" type="button" disabled>
+                            <i class="fas fa-expand-alt me-1"></i>
+                        </button>
+                    </div>
                     <div class="card-body">
-                        <canvas id="taskStatusChart"></canvas>
+                        <div class="chart-container">
+                            <canvas id="taskStatusChart"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Detailed Performance Table -->
-        <div class="card performance-card">
-            <div class="card-body">
-                <h5 class="card-title mb-3">Detailed Performance</h5>
-                <div class="table-responsive">
+        <!-- Replace the existing table section with this enhanced version -->
+        <div class="dashboard-card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Team Performance Details</h5>
+                <div class="d-flex gap-2">
+                    <span class="text-muted small">
+                        <i class="fas fa-circle-info me-1"></i>
+                        Showing <?php echo count($performance_data); ?> members
+                    </span>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-container">
                     <table class="table table-hover">
-                        <thead class="table-light">
+                        <thead>
                             <tr>
                                 <th>Team Member</th>
-                                <th>Total Tasks</th>
-                                <th>Verified Tasks</th>
-                                <th>Points Earned</th>
-                                <th>Total Points Available</th>
-                                <th>Performance Score</th>
-                                <th>Action</th>
+                                <th class="text-center">Total Tasks</th>
+                                <th class="text-center">Verified Tasks</th>
+                                <th class="text-center">Points Earned</th>
+                                <th class="text-center">Total Points</th>
+                                <th class="text-center">Performance</th>
+                                <th class="text-end">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php foreach ($performance_data as $data): ?>
                             <tr>
-                                <td><?php echo htmlspecialchars($data['username']); ?></td>
-                                <td><?php echo $data['total_tasks']; ?></td>
-                                <td><?php echo $data['verified_tasks']; ?></td>
-                                <td><?php echo $data['verified_points']; ?></td>
-                                <td><?php echo $data['total_points']; ?></td>
                                 <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-initials rounded-circle me-3 d-flex align-items-center justify-content-center">
+                                            <span><?php echo substr($data['username'], 0, 1); ?></span>
+                                        </div>
+                                        <span class="username-cell"><?php echo htmlspecialchars($data['username']); ?></span>
+                                    </div>
+                                </td>
+                                <td class="text-center metric-cell"><?php echo $data['total_tasks']; ?></td>
+                                <td class="text-center metric-cell"><?php echo $data['verified_tasks']; ?></td>
+                                <td class="text-center metric-cell"><?php echo $data['verified_points']; ?></td>
+                                <td class="text-center metric-cell"><?php echo $data['total_points']; ?></td>
+                                <td class="text-center">
                                     <?php 
                                     $score = number_format($data['avg_performance'], 1);
-                                    $score_class = $score >= 75 ? 'score-high' : ($score >= 50 ? 'score-medium' : 'score-low');
+                                    $score_class = $score == 100 ? 'score-high' : 
+                                                ($score >= 75 ? 'score-medium' : 
+                                                ($score >= 50 ? 'score-low' : 
+                                                ($score >= 25 ? 'score-lowest' : 'score-zero')));
                                     echo "<span class='performance-score $score_class'>$score%</span>";
                                     ?>
                                 </td>
-                                <td>
-                                    <button class="btn btn-sm btn-info" onclick="viewDetails(<?php echo $data['user_id']; ?>)">
-                                        View Details
+                                <td class="text-end">
+                                    <button class="btn btn-details" onclick="viewDetails(<?php echo $data['user_id']; ?>)">
+                                        <i class="fas fa-eye me-2"></i>View Details
                                     </button>
                                 </td>
                             </tr>
@@ -243,7 +595,7 @@ $total_not_viewed = array_sum(array_column($performance_data, 'not_viewed_tasks'
     </div>
 
     <script>
-        // Performance Chart
+        // Performance Chart with improved styling
         new Chart(
             document.getElementById('performanceChart'),
             {
@@ -255,30 +607,68 @@ $total_not_viewed = array_sum(array_column($performance_data, 'not_viewed_tasks'
                         data: <?php echo json_encode(array_map(function($item) { 
                             return round($item['avg_performance'], 1); 
                         }, $performance_data)); ?>,
-                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 1
+                        backgroundColor: function(context) {
+                            const value = context.dataset.data[context.dataIndex];
+                            return value == 100 ? 'rgba(96, 98, 196, 0.9)' :     // Verified - Purple
+                                   value >= 75 ? 'rgba(4, 113, 77, 0.9)' :       // Completed - Green
+                                   value >= 50 ? 'rgba(59, 130, 246, 0.9)' :     // In Progress - Blue
+                                   value >= 25 ? 'rgba(234, 179, 8, 0.9)' :      // In Study - Yellow
+                                               'rgba(227, 22, 22, 0.9)';         // Not Viewed - Red
+                        },
+                        borderRadius: 8,
+                        borderWidth: 0
                     }]
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     plugins: {
-                        title: {
-                            display: true,
-                            text: 'Team Member Performance Scores'
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 12,
+                            titleFont: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            bodyFont: {
+                                size: 13
+                            },
+                            displayColors: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return `Performance: ${context.raw}%`;
+                                }
+                            }
                         }
                     },
                     scales: {
                         y: {
                             beginAtZero: true,
-                            max: 100
+                            max: 100,
+                            grid: {
+                                display: true,
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
                         }
                     }
                 }
             }
         );
 
-        // Task Status Chart
+        // Task Status Chart with improved styling
         new Chart(
             document.getElementById('taskStatusChart'),
             {
@@ -290,31 +680,39 @@ $total_not_viewed = array_sum(array_column($performance_data, 'not_viewed_tasks'
                             <?php echo "$total_verified, $total_completed, $total_in_progress, $total_in_study, $total_not_viewed"; ?>
                         ],
                         backgroundColor: [
-                            'rgba(40, 167, 69, 0.5)',  // green for verified
-                            'rgba(75, 192, 192, 0.5)', // teal for completed
-                            'rgba(54, 162, 235, 0.5)', // blue for in progress
-                            'rgba(255, 193, 7, 0.5)',  // yellow for in study
-                            'rgba(108, 117, 125, 0.5)' // gray for not viewed
+                            'rgba(96, 98, 196, 0.9)',    // Purple - Verified
+                            'rgba(4, 113, 77, 0.9)',     // Green - Completed
+                            'rgba(59, 130, 246, 0.9)',    // Blue- In Progress
+                            'rgba(234, 179, 8, 0.9)',    // Yellow - In Study
+                            'rgba(227, 22, 22, 0.9)'      // Red - Not Viewed
                         ],
-                        borderColor: [
-                            'rgba(40, 167, 69, 1)',
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 193, 7, 1)',
-                            'rgba(108, 117, 125, 1)'
-                        ],
-                        borderWidth: 1
+                        borderWidth: 0,
+                        hoverOffset: 15
                     }]
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '65%',
                     plugins: {
-                        title: {
-                            display: true,
-                            text: 'Task Status Distribution'
-                        },
                         legend: {
-                            position: 'bottom'
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 12,
+                            titleFont: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            bodyFont: {
+                                size: 13
+                            }
                         }
                     }
                 }
@@ -339,7 +737,13 @@ $total_not_viewed = array_sum(array_column($performance_data, 'not_viewed_tasks'
             const csvRows = rows.slice(1).map(row => {
                 const cells = Array.from(row.querySelectorAll('td'))
                     .slice(0, -1) // Remove the Action column
-                    .map(cell => {
+                    .map((cell, index) => {
+                        // For the username cell, get just the text content without the initials
+                        if (index === 0) {
+                            const usernameSpan = cell.querySelector('span.fw-medium');
+                            return escapeCsvField(usernameSpan ? usernameSpan.textContent.trim() : cell.textContent.trim());
+                        }
+                        
                         // If the cell contains a span with performance score, get just the number
                         const scoreSpan = cell.querySelector('.performance-score');
                         const value = scoreSpan ? scoreSpan.textContent.replace('%', '') : cell.textContent;

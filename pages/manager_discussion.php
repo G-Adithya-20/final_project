@@ -4,8 +4,6 @@ require '../includes/db_connect.php';
 
 // Ensure only team members can access this page 
 if ($_SESSION['role'] != 'Manager' ) {
-    // header("Location: error.php");
-    // exit;
     echo "<script>window.location.href = 'error.php';</script>";
 }
 
@@ -43,13 +41,22 @@ $stmt->close();
     
     <style>
         :root {
-            --primary: #2c3e50;
-            --secondary: #34495e;
-            --background: #f8f9fa;
-            --accent: #3498db;
-            --success: #2ecc71;
-            --warning: #f1c40f;
-            --danger: #e74c3c;
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --primary-light: #6366f1;
+            --secondary: #3b82f6;
+            --background: #f9fafb;
+            --card-bg: #ffffff;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --accent: #10b981;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --border-radius: 12px;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
 
         body {
@@ -57,6 +64,8 @@ $stmt->close();
             background-color: var(--background);
             min-height: 100vh;
             padding-top: 2rem;
+            padding-bottom: 2rem;
+            color: var(--text-dark);
         }
 
         .page-container {
@@ -66,59 +75,85 @@ $stmt->close();
         }
 
         .page-header {
-            background-color: #ffffff;
-            padding: 2rem;
-            border-radius: 10px;
+            background: linear-gradient(to right, var(--primary), var(--primary-light));
+            padding: 2.5rem;
+            border-radius: var(--border-radius);
             margin-bottom: 2rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            box-shadow: var(--shadow);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(30deg);
         }
 
         .page-title {
-            color: var(--primary);
-            font-weight: 600;
+            color: white;
+            font-weight: 700;
             margin: 0;
             font-size: 1.75rem;
+            position: relative;
+            z-index: 1;
         }
 
         .back-btn {
-            background-color: var(--primary);
-            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
             border: none;
             padding: 0.5rem 1.25rem;
-            border-radius: 5px;
+            border-radius: 50px;
             text-decoration: none;
             transition: all 0.3s ease;
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
             font-weight: 500;
+            backdrop-filter: blur(5px);
+            position: relative;
+            z-index: 1;
         }
 
         .back-btn:hover {
-            background-color: var(--secondary);
-            color: #ffffff;
-            transform: translateY(-1px);
+            background-color: rgba(255, 255, 255, 0.3);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .discussions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
         }
 
         .discussion-card {
-            background: #ffffff;
-            border-radius: 10px;
-            border: none;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            border-left: 4px solid var(--secondary);
             transition: all 0.3s ease;
-            margin-bottom: 1rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            box-shadow: var(--shadow-sm);
             text-decoration: none;
-            color: var(--primary);
+            color: var(--text-dark);
             display: block;
+            overflow: hidden;
         }
 
         .discussion-card:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-            color: var(--primary);
+            box-shadow: var(--shadow-lg);
+            color: var(--text-dark);
+            border-left-color: var(--primary);
         }
 
         .discussion-body {
@@ -128,37 +163,76 @@ $stmt->close();
         .discussion-title {
             font-size: 1.2rem;
             font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: var(--primary);
-        }
-
-        .discussion-meta {
-            font-size: 0.875rem;
-            color: #6c757d;
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-dark);
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
 
+        .discussion-title::before {
+            content: "";
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: var(--secondary);
+            border-radius: 50%;
+        }
+
+        .discussion-meta {
+            font-size: 0.875rem;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
         .discussion-description {
-            color: #495057;
+            color: var(--text-light);
             margin: 0;
-            line-height: 1.5;
+            line-height: 1.6;
+            /* Removed text truncation properties */
         }
 
         @media (max-width: 768px) {
             .page-header {
-                padding: 1.5rem;
+                padding: 2rem 1.5rem;
                 flex-direction: column;
-                gap: 1rem;
+                gap: 1.5rem;
                 text-align: center;
             }
 
-            .discussion-body {
-                padding: 1.25rem;
+            .discussion-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
             }
         }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .discussions-list a {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .discussions-list a:nth-child(1) { animation-delay: 0.1s; }
+        .discussions-list a:nth-child(2) { animation-delay: 0.2s; }
+        .discussions-list a:nth-child(3) { animation-delay: 0.3s; }
+        .discussions-list a:nth-child(4) { animation-delay: 0.4s; }
+        .discussions-list a:nth-child(5) { animation-delay: 0.5s; }
+        .discussions-list a:nth-child(6) { animation-delay: 0.6s; }
     </style>
 </head>
 <body>
@@ -180,10 +254,14 @@ $stmt->close();
                             <?= htmlspecialchars($discussion['issue']) ?>
                         </h2>
                         <div class="discussion-meta">
-                            <i class="fas fa-user"></i>
-                            <span><?= htmlspecialchars($discussion['username']) ?></span>
-                            <i class="fas fa-clock ms-2"></i>
-                            <span><?= htmlspecialchars($discussion['started_at']) ?></span>
+                            <div class="meta-item">
+                                <i class="fas fa-user"></i>
+                                <span><?= htmlspecialchars($discussion['username']) ?></span>
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-clock"></i>
+                                <span><?= htmlspecialchars($discussion['started_at']) ?></span>
+                            </div>
                         </div>
                         <p class="discussion-description">
                             <?= htmlspecialchars($discussion['description']) ?>

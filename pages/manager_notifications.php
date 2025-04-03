@@ -33,175 +33,188 @@ $meetingResult = $conn->query($meetingQuery);
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --light: #f1f5f9;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f8f9fa;
+            background-color: var(--light);
         }
 
         .navbar {
-            background: linear-gradient(to right, #2c3e50, #3498db);
-            padding: 1rem 0;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 1.5rem 0;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
         .navbar .back-btn {
-            color: #ffffff;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: color 0.3s;
+            background: rgba(255, 255, 255, 0.15);
             border: 1px solid rgba(255, 255, 255, 0.3);
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
         }
 
         .navbar .back-btn:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: #ffffff;
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
         }
 
         .navbar-brand {
-            color: #ffffff;
-            font-weight: 600;
-            margin-left: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .notifications-container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-
-        .notification-card {
-            background: #ffffff;
-            border-radius: 10px;
-            border: none;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            margin-bottom: 1.5rem;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .notification-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        .notification-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.25rem;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-        }
-
-        .notification-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #2c3e50;
-            margin: 0;
-        }
-
-        .notification-content {
-            padding: 1.25rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
         }
 
         .section-title {
-            color: #2c3e50;
-            font-size: 1.5rem;
-            font-weight: 600;
+            color: var(--primary);
+            font-size: 1.75rem;
+            font-weight: 700;
             margin-bottom: 1.5rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid #3498db;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
+            position: relative;
+            padding-bottom: 0.75rem;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+
+        .notification-card {
+            background: white;
+            border-radius: 16px;
+            border: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .notification-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .notification-header {
+            background: linear-gradient(to right, rgba(67, 97, 238, 0.05), rgba(63, 55, 201, 0.05));
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .notification-title {
+            font-size: 1.25rem;
+            color: var(--primary);
+        }
+
+        .notification-content {
+            padding: 1.5rem;
         }
 
         .meta-item {
+            background: rgba(67, 97, 238, 0.05);
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            margin-bottom: 0.75rem;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            color: #6c757d;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
+            gap: 0.75rem;
+        }
+
+        .meta-item i {
+            color: var(--primary);
+            font-size: 1.1rem;
         }
 
         .status-pending {
-            color: #f39c12;
-            font-weight: 500;
+            background: linear-gradient(135deg, var(--warning), #fbbf24);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.875rem;
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            background-color: rgba(243, 156, 18, 0.1);
-            padding: 0.25rem 0.75rem;
-            border-radius: 50px;
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
         }
 
-        .timer {
-            color: #3498db;
-            font-size: 0.9rem;
-            display: flex;
+        .btn-view, .btn-join {
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            margin-bottom: 1rem;
         }
 
         .btn-view {
-            background-color: #3498db;
-            color: #ffffff;
-            padding: 0.75rem 1.5rem;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: 500;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s;
-        }
-
-        .btn-view:hover {
-            background-color: #2980b9;
-            color: #ffffff;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
         }
 
         .btn-join {
-            background-color: #2ecc71;
-            color: #ffffff;
-            padding: 0.75rem 1.5rem;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: 500;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s;
+            background: linear-gradient(135deg, var(--success), #34d399);
+            color: white;
+            border: none;
         }
 
-        .btn-join:hover {
-            background-color: #27ae60;
-            color: #ffffff;
+        .btn-view:hover, .btn-join:hover {
+            transform: translateY(-2px);
+            color: white;
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.2);
+        }
+
+        .timer {
+            background: rgba(67, 97, 238, 0.05);
+            color: var(--primary);
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .empty-state {
             text-align: center;
             padding: 4rem 2rem;
-            background: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
 
         .empty-state i {
             font-size: 4rem;
-            color: #dee2e6;
+            color: #e2e8f0;
             margin-bottom: 1.5rem;
         }
 
         .empty-state h3 {
-            color: #2c3e50;
-            margin-bottom: 1rem;
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 0.75rem;
         }
 
         .expired {
@@ -217,10 +230,11 @@ $meetingResult = $conn->query($meetingQuery);
                 <i class="fas fa-bell"></i>
                 Notifications
             </span>
-            <a href="manager_dashboard.php" class="back-btn">
-                <i class="fas fa-arrow-left"></i>
-                <span>Back to Dashboard</span>
-            </a>
+            <div>
+                <a href="manager_dashboard.php" class="btn btn-outline-light">
+                    <i class="fas fa-home me-2"></i>Back to Dashboard
+                </a>
+            </div>
         </div>
     </nav>
 

@@ -38,16 +38,36 @@ $meetingResult = $stmt->get_result();
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --success-color: #2ecc71;
+            --success-bg: rgba(46, 204, 113, 0.1);
+            --danger-color: #e63946;
+            --danger-bg: rgba(230, 57, 70, 0.1);
+            --text-dark: #2d3748;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --card-bg: #ffffff;
+            --body-bg: #f8fafc;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
         
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8f9fa;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--body-bg);
+            color: var(--text-dark);
+            line-height: 1.6;
         }
 
         .navbar {
-            background: linear-gradient(to right, #2c3e50, #3498db);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         .navbar .back-btn {
@@ -56,152 +76,256 @@ $meetingResult = $stmt->get_result();
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            transition: color 0.3s;
+            transition: var(--transition);
             border: 1px solid rgba(255, 255, 255, 0.3);
             padding: 0.5rem 1rem;
-            border-radius: 6px;
+            border-radius: 8px;
+            font-weight: 500;
+            backdrop-filter: blur(5px);
+            background-color: rgba(255, 255, 255, 0.1);
         }
 
         .navbar .back-btn:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         .navbar-brand {
             color: #ffffff;
-            font-weight: 600;
+            font-weight: 700;
             margin-left: 1rem;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
+            font-size: 1.25rem;
+            letter-spacing: 0.5px;
+        }
+
+        .navbar-brand i {
+            font-size: 1.3rem;
+            background-color: rgba(255, 255, 255, 0.2);
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
         }
 
         .notifications-container {
-            max-width: 1200px;
-            margin: 2rem auto;
+            max-width: 1140px;
+            margin: 3rem auto;
+            padding: 0 1.5rem;
         }
 
         .notification-card {
-            background: #ffffff;
-            border-radius: 10px;
+            background: var(--card-bg);
+            border-radius: 12px;
             border: none;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            margin-bottom: 1.5rem;
-            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 1.75rem;
+            transition: var(--transition);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
         }
 
         .notification-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
         }
 
         .notification-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1.25rem;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            background-color: rgba(241, 245, 249, 0.5);
         }
 
         .notification-title {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             font-weight: 600;
-            color: #2c3e50;
+            color: var(--text-dark);
             margin: 0;
+            letter-spacing: -0.3px;
         }
 
         .notification-content {
-            padding: 1.25rem;
+            padding: 1.5rem;
         }
 
         .section-title {
-            color: #2c3e50;
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid #3498db;
+            color: var(--text-dark);
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--primary-color);
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
+            letter-spacing: -0.5px;
+        }
+
+        .section-title i {
+            color: var(--primary-color);
+            font-size: 1.5rem;
         }
 
         .meta-item {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            color: #6c757d;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
+            gap: 0.75rem;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 0.75rem;
+            padding: 0.5rem 0;
+        }
+
+        .meta-item i {
+            color: var(--primary-color);
+            font-size: 1rem;
+            width: 24px;
+            text-align: center;
         }
 
         .status-approved {
-            color: #2ecc71;
-            font-weight: 500;
+            color: var(--success-color);
+            font-weight: 600;
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            background-color: rgba(46, 204, 113, 0.1);
-            padding: 0.25rem 0.75rem;
+            background-color: var(--success-bg);
+            padding: 0.35rem 1rem;
             border-radius: 50px;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 4px rgba(46, 204, 113, 0.15);
         }
 
         .status-rejected {
-            color: #e74c3c;
-            font-weight: 500;
+            color: var(--danger-color);
+            font-weight: 600;
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            background-color: rgba(231, 76, 60, 0.1);
-            padding: 0.25rem 0.75rem;
+            background-color: var(--danger-bg);
+            padding: 0.35rem 1rem;
             border-radius: 50px;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 4px rgba(230, 57, 70, 0.15);
         }
 
         .timer {
-            color: #3498db;
-            font-size: 0.9rem;
+            color: var(--primary-color);
+            font-weight: 500;
+            font-size: 0.95rem;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
+            gap: 0.75rem;
+            margin: 1.25rem 0;
+            padding: 0.75rem 1rem;
+            background-color: rgba(67, 97, 238, 0.08);
+            border-radius: 8px;
         }
 
         .btn-join {
-            background-color: #2ecc71;
+            background: linear-gradient(135deg, var(--success-color), #26a65b);
             border: none;
             color: #ffffff;
             padding: 0.75rem 1.5rem;
-            border-radius: 6px;
+            border-radius: 8px;
             text-decoration: none;
-            font-weight: 500;
+            font-weight: 600;
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s;
+            gap: 0.75rem;
+            transition: var(--transition);
+            box-shadow: 0 4px 8px rgba(46, 204, 113, 0.2);
+            letter-spacing: 0.5px;
         }
 
         .btn-join:hover {
-            background-color: #27ae60;
+            background: linear-gradient(135deg, #26a65b, var(--success-color));
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(46, 204, 113, 0.3);
             color: #ffffff;
         }
 
         .empty-state {
             text-align: center;
-            padding: 4rem 2rem;
-            background: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            padding: 5rem 2rem;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
         }
 
         .empty-state i {
-            font-size: 4rem;
-            color: #dee2e6;
-            margin-bottom: 1.5rem;
+            font-size: 5rem;
+            color: #cbd5e1;
+            margin-bottom: 2rem;
+            opacity: 0.7;
         }
 
         .empty-state h3 {
-            color: #2c3e50;
+            color: var(--text-dark);
             margin-bottom: 1rem;
+            font-weight: 600;
+            font-size: 1.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        .empty-state p {
+            color: var(--text-muted);
+            max-width: 400px;
+            margin: 0 auto;
+            font-size: 1rem;
+        }
+
+        /* Subtle animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .notification-card {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        .notification-card:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+        
+        .notification-card:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+        
+        /* Dark mode toggle - for future implementation */
+        .mode-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: var(--transition);
+            z-index: 100;
+        }
+        
+        .mode-toggle:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
         }
     </style>
 </head>
@@ -214,7 +338,7 @@ $meetingResult = $stmt->get_result();
                 Notifications
             </span>
             <a href="teamlead_dashboard.php" class="back-btn">
-                <i class="fas fa-arrow-left"></i>
+                <i class="fas fa-home me-2"></i>
                 <span>Back to Dashboard</span>
             </a>
         </div>
@@ -304,6 +428,11 @@ $meetingResult = $stmt->get_result();
         <?php endif; ?>
     </div>
 
+    <!-- Future dark mode toggle button (non-functional for now) -->
+    <!-- <div class="mode-toggle">
+        <i class="fas fa-moon"></i>
+    </div> -->
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
     <script>
         function updateTimers() {
@@ -323,8 +452,21 @@ $meetingResult = $stmt->get_result();
             });
         }
 
-        setInterval(updateTimers, 60000);
+        // Initial update and set interval
         updateTimers();
+        setInterval(updateTimers, 60000);
+        
+        // Add subtle entrance animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.notification-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 100 * index);
+            });
+        });
     </script>
 
     <?php

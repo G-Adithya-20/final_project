@@ -72,118 +72,138 @@ switch(strtolower($_SESSION['role'])) {
     <title>Change Password | Team Management</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #34495e;
+            --background-color: #f4f7f6;
+            --text-color: #2c3e50;
+        }
+
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8f9fa;
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
         }
 
-        .navbar {
-            background-color: #2c3e50;
-        }
-
-        .back-btn {
-            color: #ffffff;
-            text-decoration: none;
-            display: inline-flex;
+        .auth-wrapper {
+            display: flex;
             align-items: center;
-            gap: 0.5rem;
-            transition: color 0.3s;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f6f8f9 0%, #e5ebee 100%);
+            padding: 2rem 0;
         }
 
-        .back-btn:hover {
-            color: #3498db;
-        }
-
-        .card {
+        .password-card {
+            max-width: 500px;
+            width: 100%;
             border: none;
-            border-radius: 0.5rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s, box-shadow 0.3s;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            background: white;
         }
 
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .form-control {
-            border: 1px solid #dee2e6;
-            border-radius: 0.375rem;
-            padding: 0.75rem;
-            font-size: 0.95rem;
-        }
-
-        .form-control:focus {
-            border-color: #3498db;
-            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
-        }
-
-        .btn-primary {
-            background-color: #3498db;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            font-weight: 500;
-            transition: background-color 0.3s;
-        }
-
-        .btn-primary:hover {
-            background-color: #2980b9;
-        }
-
-        .btn-secondary {
-            background-color: #95a5a6;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            font-weight: 500;
-            transition: background-color 0.3s;
-        }
-
-        .btn-secondary:hover {
-            background-color: #7f8c8d;
-        }
-
-        .alert {
-            border: none;
-            border-radius: 0.5rem;
-        }
-
-        .password-requirements {
-            font-size: 0.875rem;
-            color: #6c757d;
-            margin-top: 0.5rem;
-        }
-
-        .card-header {
-            background-color: white;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
+        .password-card-header {
+            background: linear-gradient(to right, var(--primary-color), #3498db);
+            color: white;
             padding: 1.5rem;
+            text-align: center;
+        }
+
+        .password-card-header h2 {
+            margin: 0;
+            font-weight: 600;
+            font-size: 1.5rem;
+        }
+
+        .password-card-body {
+            padding: 2rem;
         }
 
         .form-label {
             font-weight: 500;
-            color: #2c3e50;
+            color: var(--secondary-color);
             margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            border: 1px solid #e0e4e7;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
+        }
+
+        .input-group-text {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary-color), #3498db);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: transform 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+        }
+
+        .password-requirements {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+            margin-top: 0.5rem;
+        }
+
+        .alert {
+            border-radius: 8px;
+        }
+
+        @media (max-width: 576px) {
+            .password-card {
+                margin: 1rem;
+            }
+        }
+
+        .password-card-header a {
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .password-card-header a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(-5px);
         }
     </style>
 </head>
 <body>
-    <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark sticky-top mb-4">
-        <div class="container">
-            <a href="<?= $back_url ?>" class="back-btn">
-                <i class="fas fa-arrow-left"></i>
-                <span>Back to Dashboard</span>
-            </a>
-            <span class="navbar-brand ms-3">Change Password</span>
-        </div>
-    </nav>
-
-    <div class="container py-4">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
+    <div class="auth-wrapper">
+        <div class="password-card">
+            <div class="password-card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2><i class="fas fa-key me-2"></i>Change Password</h2>
+                    <a href="login.php" class="text-white text-decoration-none">
+                        <i class="fas fa-arrow-left me-1"></i> Back to Login
+                    </a>
+                </div>
+            </div>
+            <div class="password-card-body">
                 <?php if ($message): ?>
                     <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
                         <i class="fas fa-check-circle me-2"></i><?= $message ?>
@@ -198,53 +218,46 @@ switch(strtolower($_SESSION['role'])) {
                     </div>
                 <?php endif; ?>
 
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="mb-0">Update Your Password</h4>
+                <form method="POST" action="" class="needs-validation" novalidate>
+                    <div class="mb-4">
+                        <label for="current_password" class="form-label">Current Password</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="current_password" name="current_password" required>
+                            <button class="btn" type="button" onclick="togglePassword('current_password')">
+                                <i class="far fa-eye"></i>
+                            </button>
+                        </div>
                     </div>
-                    <div class="card-body p-4">
-                        <form method="POST" action="" class="needs-validation" novalidate>
-                            <div class="mb-4">
-                                <label for="current_password" class="form-label">Current Password</label>
-                                <div class="input-group">
-                                    <input type="password" class="form-control" id="current_password" name="current_password" required>
-                                    <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('current_password')">
-                                        <i class="far fa-eye"></i>
-                                    </button>
-                                </div>
-                            </div>
 
-                            <div class="mb-4">
-                                <label for="new_password" class="form-label">New Password</label>
-                                <div class="input-group">
-                                    <input type="password" class="form-control" id="new_password" name="new_password" required>
-                                    <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('new_password')">
-                                        <i class="far fa-eye"></i>
-                                    </button>
-                                </div>
-                                <div class="password-requirements">
-                                    Password must be at least 6 characters long
-                                </div>
-                            </div>
-
-                            <div class="mb-4">
-                                <label for="confirm_password" class="form-label">Confirm New Password</label>
-                                <div class="input-group">
-                                    <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
-                                    <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('confirm_password')">
-                                        <i class="far fa-eye"></i>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-key me-2"></i>Update Password
-                                </button>
-                            </div>
-                        </form>
+                    <div class="mb-4">
+                        <label for="new_password" class="form-label">New Password</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="new_password" name="new_password" required>
+                            <button class="btn" type="button" onclick="togglePassword('new_password')">
+                                <i class="far fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="password-requirements">
+                            Password must be at least 6 characters long
+                        </div>
                     </div>
-                </div>
+
+                    <div class="mb-4">
+                        <label for="confirm_password" class="form-label">Confirm New Password</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                            <button class="btn" type="button" onclick="togglePassword('confirm_password')">
+                                <i class="far fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-lock me-2"></i>Update Password
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

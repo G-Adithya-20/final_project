@@ -41,54 +41,101 @@ $meetingResult = $stmt->get_result();
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
         
+        :root {
+            --primary-color: #4a6cf7;
+            --secondary-color: #6a4cfe;
+            --background-color: #f4f7ff;
+            --text-color-dark: #2c3e50;
+            --text-color-light: #ffffff;
+            --card-shadow: 0 10px 30px rgba(74, 108, 247, 0.1);
+        }
+
+        * {
+            transition: all 0.3s ease;
+        }
+
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8f9fa;
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color-dark);
+            line-height: 1.6;
+            padding-top: 100px;  /* Reduced from 150px */
         }
 
+        /* Updated Navbar Styles */
         .navbar {
-            background-color: #2c3e50;
+            background: linear-gradient(135deg, #3a66db, #2952c8);
             padding: 1rem 0;
-        }
-
-        .navbar .back-btn {
-            color: #ffffff;
-            text-decoration: none;
-            display: inline-flex;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            height: 100px;  /* Reduced from 150px */
+            display: flex;
             align-items: center;
-            gap: 0.5rem;
-            transition: color 0.3s;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1030;
         }
 
-        .navbar .back-btn:hover {
-            color: #3498db;
+        .navbar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
         }
 
         .navbar-brand {
-            color: #ffffff;
+            font-size: 1.4rem;
             font-weight: 600;
-            margin-left: 1rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-back {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(5px);
+        }
+
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+            color: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
         .notifications-container {
-            max-width: 1200px;
+            max-width: 1100px;
             margin: 2rem auto;
+            padding: 0 1rem;
         }
 
         .notification-card {
-            background: #ffffff;
-            border-radius: 10px;
+            background: var(--text-color-light);
+            border-radius: 16px;
             border: none;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            margin-bottom: 1.5rem;
-            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 1.75rem;
+            overflow: hidden;
         }
 
         .notification-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(74, 108, 247, 0.15);
         }
 
         .notification-header {
@@ -96,32 +143,33 @@ $meetingResult = $stmt->get_result();
             justify-content: space-between;
             align-items: center;
             padding: 1.25rem;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
+            background-color: #f9fafe;
+            border-bottom: 1px solid rgba(74, 108, 247, 0.1);
         }
 
         .notification-title {
             font-size: 1.1rem;
             font-weight: 600;
-            color: #2c3e50;
+            color: var(--text-color-dark);
             margin: 0;
         }
 
         .notification-content {
-            padding: 1.25rem;
+            padding: 1.5rem;
         }
 
         .section-title {
-            color: #2c3e50;
-            font-size: 1.5rem;
+            color: var(--primary-color);
+            font-size: 1.6rem;
             font-weight: 600;
             margin-bottom: 1.5rem;
             padding-bottom: 0.5rem;
-            border-bottom: 2px solid #3498db;
+            border-bottom: 3px solid var(--primary-color);
         }
 
         .points-badge {
-            background-color: #3498db;
-            color: #ffffff;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--text-color-light);
             padding: 0.5rem 1rem;
             border-radius: 50px;
             font-size: 0.875rem;
@@ -134,10 +182,15 @@ $meetingResult = $stmt->get_result();
         .meta-item {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
             color: #6c757d;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .meta-item i {
+            color: var(--primary-color);
+            opacity: 0.7;
         }
 
         .meeting-status {
@@ -151,68 +204,49 @@ $meetingResult = $stmt->get_result();
         }
 
         .status-scheduled {
-            background-color: #e9ecef;
-            color: #2c3e50;
+            background-color: rgba(74, 108, 247, 0.1);
+            color: var(--primary-color);
         }
 
         .status-in-progress {
-            background-color: #d4edda;
-            color: #155724;
+            background-color: rgba(46, 204, 113, 0.1);
+            color: #2ecc71;
         }
 
-        .btn-view {
-            background-color: #3498db;
-            color: #ffffff;
+        .btn-view, .btn-join {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--text-color-light);
             padding: 0.75rem 1.5rem;
-            border-radius: 6px;
+            border-radius: 8px;
             text-decoration: none;
             font-weight: 500;
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s;
+            gap: 0.75rem;
+            box-shadow: 0 5px 15px rgba(74, 108, 247, 0.25);
         }
 
-        .btn-view:hover {
-            background-color: #2980b9;
-            color: #ffffff;
-        }
-
-        .btn-join {
-            background-color: #2ecc71;
-            border-color: #2ecc71;
-            color: #ffffff;
-            padding: 0.75rem 1.5rem;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: 500;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s;
-        }
-
-        .btn-join:hover {
-            background-color: #27ae60;
-            color: #ffffff;
+        .btn-view:hover, .btn-join:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(74, 108, 247, 0.35);
         }
 
         .empty-state {
             text-align: center;
             padding: 4rem 2rem;
-            background: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            background: var(--text-color-light);
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
         }
 
         .empty-state i {
             font-size: 4rem;
-            color: #dee2e6;
+            color: rgba(74, 108, 247, 0.2);
             margin-bottom: 1.5rem;
         }
 
         .empty-state h3 {
-            color: #2c3e50;
+            color: var(--text-color-dark);
             margin-bottom: 1rem;
         }
 
@@ -221,20 +255,29 @@ $meetingResult = $stmt->get_result();
             font-size: 0.9rem;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
             margin-bottom: 1rem;
+        }
+
+        .timer i {
+            color: var(--primary-color);
+            opacity: 0.7;
         }
     </style>
 </head>
 <body>
+    <!-- Rest of the HTML remains the same as the original -->
     <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg sticky-top mb-4">
-        <div class="container">
-            <a href="teammember_dashboard.php" class="back-btn">
-                <i class="fas fa-arrow-left"></i>
-                <span>Back to Dashboard</span>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container navbar-container">
+            <div class="navbar-brand">
+                <i class="fas fa-bell me-2"></i>
+                Notifications
+            </div>
+            <a href="teammember_dashboard.php" class="btn-back">
+                <i class="fas fa-home"></i>
+                Back to Dashboard
             </a>
-            <span class="navbar-brand">Notifications</span>
         </div>
     </nav>
 
