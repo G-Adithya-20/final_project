@@ -282,7 +282,7 @@ $meetingResult = $conn->query($meetingQuery);
                     </div>
                     <div class="meta-item">
                         <i class="fas fa-clock"></i>
-                        <span>Requested: <?php echo date('F j, Y g:i A', strtotime($extension['requested_date'])); ?></span>
+                        <span>Requested: <?php echo date('F j, Y ', strtotime($extension['requested_date'])); ?></span>
                     </div>
                     <div class="text-end mt-3">
                         <a href="manage_projects.php" class="btn-view">

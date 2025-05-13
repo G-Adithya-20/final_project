@@ -4,8 +4,6 @@ require '../includes/db_connect.php';
 
 // Check if user is HR
 if (!isset($_SESSION['role']) || ($_SESSION['role'] !== 'HR' && $_SESSION['role'] !== 'Manager')) {
-    // header('Location: login.php');
-    // exit();
     echo "<script>window.location.href = 'error.php';</script>";
 }
 
@@ -64,6 +62,45 @@ $stmt->execute();
 $team_result = $stmt->get_result();
 $teams_data = $team_result->fetch_all(MYSQLI_ASSOC);
 
+// Handle CSV export
+if (isset($_POST['export'])) {
+    header('Content-Type: text/csv');
+    header('Content-Disposition: attachment; filename="team_performance_report_'.date('Y-m-d').'.csv"');
+    
+    $output = fopen('php://output', 'w');
+    
+    // Add headers
+    fputcsv($output, array(
+        'Team Name',
+        'Team Lead',
+        'Total Projects',
+        'Verified Projects',
+        'Total Points',
+        'Avg Points per Project',
+        'Avg Completion Days',
+        'Extension Requests'
+    ));
+    
+    // Add data rows
+    if (!empty($teams_data)) {
+        foreach ($teams_data as $team) {
+            fputcsv($output, array(
+                $team['team_name'],
+                $team['team_lead'],
+                $team['total_projects'],
+                $team['verified_projects'],
+                $team['total_points'],
+                round($team['avg_points_per_project'], 1),
+                round($team['avg_completion_days'], 1),
+                $team['extension_requests']
+            ));
+        }
+    }
+    
+    fclose($output);
+    exit();
+}
+
 // Update the status query to include project titles and team info
 $status_query = "
     SELECT 
@@ -121,34 +158,6 @@ $stmt->bind_param("ss", $start_date, $end_date);
 $stmt->execute();
 $timeline_result = $stmt->get_result();
 $timeline_data = $timeline_result->fetch_all(MYSQLI_ASSOC);
-
-// Handle CSV export
-if (isset($_POST['export'])) {
-    $export_data = array();
-    foreach ($teams_data as $team) {
-        $export_data[] = array(
-            'Team Name' => $team['team_name'],
-            'Team Lead' => $team['team_lead'],
-            'Total Projects' => $team['total_projects'],
-            'Verified Projects' => $team['verified_projects'],
-            'Total Points' => $team['total_points'],
-            'Avg Points per Project' => round($team['avg_points_per_project'], 1),
-            'Avg Completion Days' => round($team['avg_completion_days'], 1),
-            'Extension Requests' => $team['extension_requests']
-        );
-    }
-
-    header('Content-Type: text/csv');
-    header('Content-Disposition: attachment; filename="team_performance_report.csv"');
-    $output = fopen('php://output', 'w');
-    
-    fputcsv($output, array_keys($export_data[0]));
-    foreach ($export_data as $row) {
-        fputcsv($output, $row);
-    }
-    fclose($output);
-    exit();
-}
 ?>
 
 <!DOCTYPE html>
@@ -1309,7 +1318,7 @@ if (isset($_POST['export'])) {
                     </div>
                     <div class="d-flex gap-2 justify-content-end">
                         <form method="POST" class="d-inline-block">
-                            <button type="submit" name="export" class="export-btn">
+                            <button type="submit" name="export" class="btn btn-primary">
                                 <i class="bi bi-download"></i> Export Report
                             </button>
                         </form>
@@ -1506,6 +1515,37 @@ if (isset($_POST['export'])) {
                                             </div>
                                         <?php endforeach; ?>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add this section before the trends chart -->
+            <div class="col-md-10">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="fas fa-chart-line me-2"></i>Understanding Project Completion Trends</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <div class="info-box p-3 bg-light rounded">
+                                    <h6 class="text-primary"><i class="fas fa-arrow-up me-2"></i>Upward Trend</h6>
+                                    <p class="small mb-0">Shows improving team performance and increased project completion rate</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="info-box p-3 bg-light rounded">
+                                    <h6 class="text-warning"><i class="fas fa-arrows-alt-h me-2"></i>Stable Trend</h6>
+                                    <p class="small mb-0">Indicates consistent project completion rate over time</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="info-box p-3 bg-light rounded">
+                                    <h6 class="text-danger"><i class="fas fa-arrow-down me-2"></i>Downward Trend</h6>
+                                    <p class="small mb-0">Suggests declining completion rate or project quality or evaluation scores may need attention</p>
                                 </div>
                             </div>
                         </div>
@@ -1808,7 +1848,7 @@ if (isset($_POST['export'])) {
                         position: 'left',
                         title: {
                             display: true,
-                            text: 'Number of Projects',
+                            text: 'Number of Projects Completed',
                             color: 'rgba(75, 192, 192, 1)',
                             font: { weight: 'bold' }
                         },

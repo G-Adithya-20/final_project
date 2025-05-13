@@ -97,36 +97,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['chat_msg']) && $discu
             box-sizing: border-box;
         }
 
+        /* Update container styles for full screen */
         body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
             font-family: 'Poppins', sans-serif;
             background-color: var(--background-color);
             color: var(--text-primary);
             line-height: 1.6;
-            overflow: hidden;
+        }
+
+        .container-fluid {
+            height: 100vh;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .row {
+            flex: 1;
+            margin: 0;
         }
 
         .chat-container {
-            max-width: 1100px;
-            margin: 2rem auto;
+            height: calc(100vh - 60px); /* Subtract navbar height */
+            display: flex;
+            flex-direction: column;
             background-color: #e8f4ff; /* Changed background color to light blue */
             border-radius: 10px;
             padding: 20px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             overflow: hidden;
-            height: calc(100vh - 4rem);
-            display: flex;
-            flex-direction: column;
             border: 1px solid var(--border-color);
             animation: fadeIn 0.5s ease-out;
-            position: absolute; /* Added for centering */
-            left: 50%; /* Added for centering */
-            transform: translateX(-50%); /* Added for centering */
-            width: 90%; /* Added for responsiveness */
         }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        .chat-sidebar {
+            height: 100%;
+            overflow-y: auto;
+            border-right: 1px solid #dee2e6;
+            padding: 1rem;
+        }
+
+        .chat-main {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
         }
 
         .chat-header {
@@ -164,14 +187,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['chat_msg']) && $discu
         .chat-messages {
             flex: 1;
             overflow-y: auto;
-            padding: 1.5rem 2rem;
+            padding: 1rem;
             display: flex;
             flex-direction: column;
             gap: 1.2rem;
             scroll-behavior: smooth;
             background-color: #ffffff;
             border-radius: 8px;
-            padding: 15px;
             max-height: 500px;
         }
 
@@ -247,9 +269,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['chat_msg']) && $discu
         }
 
         .chat-input {
-            padding: 1.5rem 2rem;
-            background-color: white;
-            border-top: 1px solid var(--border-color);
+            padding: 1rem;
+            background: #fff;
+            border-top: 1px solid #dee2e6;
             position: relative;
         }
 
@@ -398,14 +420,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['chat_msg']) && $discu
             color: var(--primary-light);
         }
 
+        /* Responsive adjustments */
         @media (max-width: 768px) {
             .chat-container {
                 width: 100%;
                 margin: 0;
                 height: 100vh;
                 border-radius: 0;
-                position: static; /* Reset position on mobile */
-                transform: none; /* Reset transform on mobile */
+            }
+
+            .chat-sidebar {
+                height: 100vh;
+                position: fixed;
+                left: -100%;
+                top: 0;
+                width: 280px;
+                z-index: 1000;
+                background: #fff;
+                transition: 0.3s;
+            }
+
+            .chat-sidebar.active {
+                left: 0;
             }
 
             .message {

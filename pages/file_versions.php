@@ -105,12 +105,12 @@ $versions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         /* Navbar - Matches App Theme */
         .navbar {
             background: linear-gradient(135deg, #3a66db, #2952c8);
-            padding: 1.5rem 0;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
-            height: 120px;
+            padding: 1.2rem 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            height: 80px;
             display: flex;
             align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .navbar-container {
@@ -118,6 +118,7 @@ $versions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             justify-content: space-between;
             align-items: center;
             width: 100%;
+            padding: 0 2rem;
         }
 
         .navbar-brand {
@@ -126,29 +127,28 @@ $versions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             color: white;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.8rem;
+            text-decoration: none;
         }
 
         .btn-back {
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.1);
             color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 50px;
-            font-weight: 600;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 500;
             display: flex;
             align-items: center;
             gap: 0.5rem;
             transition: all 0.3s ease;
             text-decoration: none;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .btn-back:hover {
-            background: rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.2);
             transform: translateY(-2px);
             color: white;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
         /* ...existing styles... */

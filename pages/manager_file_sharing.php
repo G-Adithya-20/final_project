@@ -356,11 +356,11 @@ $stmt->close();
     <!-- Navigation Bar -->
     <nav class="navbar navbar-expand-lg sticky-top mb-4">
         <div class="container">
+            <span class="navbar-brand"><i class="fas fa-folder-open me-2"></i>File Repository</span>
             <a href="manager_dashboard.php" class="back-btn">
                 <i class="fas fa-home me-2"></i>
                 <span>Back to Dashboard</span>
             </a>
-            <span class="navbar-brand"><i class="fas fa-folder-open me-2"></i>File Repository</span>
         </div>
     </nav>
 

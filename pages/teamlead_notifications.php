@@ -377,9 +377,9 @@ $meetingResult = $stmt->get_result();
                         <span>New Due Date: <?php echo date('F j, Y', strtotime($extension['new_due_date'])); ?></span>
                     </div>
                     <div class="meta-item">
-                        <i class="fas fa-clock"></i>
-                        <span>Responded: <?php echo time_elapsed_string($extension['responded_at']); ?></span>
-                    </div>
+    <i class="fas fa-clock"></i>
+    <span>Responded: <?php echo date('F j, Y g:i A', strtotime($extension['responded_at'])); ?></span>
+</div>
                 </div>
             </div>
             <?php endwhile; ?>
@@ -469,23 +469,6 @@ $meetingResult = $stmt->get_result();
         });
     </script>
 
-    <?php
-    // Helper function to format time elapsed
-    function time_elapsed_string($datetime) {
-        $now = new DateTime;
-        $ago = new DateTime($datetime);
-        $diff = $now->diff($ago);
-
-        if ($diff->d == 1) {
-            return '1 day ago';
-        } elseif ($diff->h >= 1) {
-            return $diff->h . ' hours ago';
-        } elseif ($diff->i >= 1) {
-            return $diff->i . ' minutes ago';
-        } else {
-            return 'Just now';
-        }
-    }
-    ?>
+   
 </body>
 </html>

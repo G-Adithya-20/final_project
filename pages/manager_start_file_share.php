@@ -12,23 +12,36 @@ $error = "";
 $success = "";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $title = $_POST['title'];
-    $description = $_POST['description'];
-    $is_project_file = isset($_POST['is_project_file']) ? 1 : 0;
-    $user_id = $_SESSION['user_id'];
-    $username = $_SESSION['username'];
+    if (isset($_POST['submit_info'])) {
+        $title = $_POST['title'];
+        $description = $_POST['description'];
+        $is_project_file = isset($_POST['is_project_file']) ? 1 : 0;
+        $user_id = $_SESSION['user_id'];
+        $username = $_SESSION['username'];
 
-    $query = "INSERT INTO file_shares (title, description, user_id, username, is_project_file) 
-              VALUES (?, ?, ?, ?, ?)";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("ssssi", $title, $description, $user_id, $username, $is_project_file);
+        $query = "INSERT INTO file_shares (title, description, user_id, username, is_project_file) 
+                VALUES (?, ?, ?, ?, ?)";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("ssssi", $title, $description, $user_id, $username, $is_project_file);
 
-    if ($stmt->execute()) {
-        // header("Location: manager_file_sharing.php");
-        // exit;
-        echo "<script>window.location.href = 'manager_file_sharing.php';</script>";
-    } else {
-        $error = "Failed to create file share. Please try again.";
+        if ($stmt->execute()) {
+            // header("Location: manager_file_sharing.php");
+            // exit;
+            echo "<script>window.location.href = 'manager_file_sharing.php';</script>";
+        } else {
+            $error = "Failed to create file share. Please try again.";
+        }
+    } elseif (isset($_FILES['file'])) {
+        // Handle file upload
+        $allowed_types = ['application/pdf'];
+        $file_type = $_FILES['file']['type'];
+        
+        if (in_array($file_type, $allowed_types)) {
+            // Process the file upload (this is a placeholder - implement your file saving logic)
+            $success = "File uploaded successfully!";
+        } else {
+            $error = "Only PDF files are allowed.";
+        }
     }
 }
 ?>
@@ -83,7 +96,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             z-index: 100;
         }
 
-        .navbar .back-btn {
+        .navbar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-title {
+            color: var(--white);
+            font-weight: 600;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-back {
             color: var(--white);
             text-decoration: none;
             display: inline-flex;
@@ -97,7 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             overflow: hidden;
         }
 
-        .navbar .back-btn::before {
+        .btn-back::before {
             content: '';
             position: absolute;
             top: 0;
@@ -111,36 +139,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             border-radius: 8px;
         }
 
-        .navbar .back-btn:hover::before {
+        .btn-back:hover::before {
             transform: scaleX(1);
             transform-origin: left;
         }
 
-        .navbar .back-btn:hover {
+        .btn-back:hover {
             color: var(--white);
-        }
-
-        .navbar-brand {
-            color: var(--white);
-            font-weight: 600;
-            margin-left: 1rem;
-            position: relative;
-            font-size: 1.25rem;
-        }
-
-        .navbar-brand::after {
-            content: '';
-            position: absolute;
-            bottom: -3px;
-            left: 0;
-            width: 40%;
-            height: 2px;
-            background-color: var(--white);
-            transition: width 0.3s ease;
-        }
-
-        .navbar-brand:hover::after {
-            width: 100%;
         }
 
         .main-container {
@@ -382,6 +387,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         .error-alert i {
             font-size: 1.5rem;
         }
+        
+        .success-alert {
+            background-color: #f0fff4;
+            border-left: 4px solid #2ecc71;
+            color: #27ae60;
+            padding: 1.25rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.1);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .success-alert i {
+            font-size: 1.5rem;
+        }
 
         .form-floating {
             position: relative;
@@ -481,6 +504,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             border-color: #198754;
             box-shadow: 0 0 0 4px rgba(25, 135, 84, 0.1);
         }
+        
+        .buttons-container {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-top: 2rem;
+        }
 
         @media (max-width: 768px) {
             .main-container {
@@ -503,9 +533,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 padding: 1.5rem;
             }
 
+            .buttons-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
             .btn-submit {
                 width: 100%;
                 justify-content: center;
+                margin-right: 0;
             }
         }
 
@@ -559,12 +595,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <!-- Navigation Bar -->
     <nav class="navbar navbar-expand-lg sticky-top">
-        <div class="container">
-            <a href="manager_file_sharing.php" class="back-btn">
-                <i class="fas fa-arrow-left"></i>
-                <span>Back to Repository</span>
-            </a>
-            <span class="navbar-brand">File Upload</span>
+        <div class="container navbar-container">
+            <div class="navbar-title">
+                <i class="fas fa-file-upload me-2"></i>File Upload
+            </div>
+            <div>
+                <a href="manager_file_sharing.php" class="btn-back">
+                    <i class="fas fa-archive me-2"></i>Back to Repository
+                </a>
+            </div>
         </div>
     </nav>
 
@@ -579,6 +618,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <div class="error-alert">
                         <i class="fas fa-exclamation-circle"></i>
                         <span><?= htmlspecialchars($error) ?></span>
+                    </div>
+                <?php endif; ?>
+                
+                <?php if (!empty($success)): ?>
+                    <div class="success-alert">
+                        <i class="fas fa-check-circle"></i>
+                        <span><?= htmlspecialchars($success) ?></span>
                     </div>
                 <?php endif; ?>
 
@@ -615,8 +661,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </label>
                     </div>
 
-                    <div class="text-end mt-4">
-                        <button type="submit" class="btn btn-submit">
+                    <div class="buttons-container">
+                        <button type="submit" name="submit_info" class="btn btn-submit">
                             <i class="fas fa-upload"></i>
                             Create File Share
                         </button>

@@ -391,10 +391,7 @@
                 <i class="far fa-folder-open"></i>
                 <h3>No files shared yet</h3>
                 <p>Your team hasn't shared any files. Click the button above to be the first one to share a file with your team.</p>
-                <a href="start_file_share.php" class="btn btn-share">
-                    <i class="fas fa-plus"></i>
-                    Share New File
-                </a>
+               
             </div>
         <?php endif; ?>
     </div>

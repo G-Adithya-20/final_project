@@ -309,7 +309,7 @@ function sanitizeInput($input) {
             </a>
             <div>
                 <a href="manage_projects.php" class="btn btn-outline-light">
-                    <i class="fas fa-home me-2"></i>Back to Dashboard
+                    <i class="fas fa-home me-2"></i>Back to Project Dashboard
                 </a>
             </div>
         </div>

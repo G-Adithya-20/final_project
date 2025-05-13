@@ -727,7 +727,7 @@ $statusMap = [
                                         'completed' => 90,
                                         'inprogress' => 60,
                                         'instudy' => 30,
-                                        default => 10
+                                        default => 0
                                     };
                                     ?>
                                     <div class="d-flex justify-content-between align-items-center mb-1">

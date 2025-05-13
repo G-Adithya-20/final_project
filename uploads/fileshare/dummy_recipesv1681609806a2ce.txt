@@ -1,0 +1,33 @@
+
+Project Description:
+This project is an AI-powered recipe generator that suggests personalized recipes based on available ingredients, dietary preferences, and cooking history. The system uses machine learning to recommend meals that suit user tastes and nutritional goals.
+
+Recipes:
+
+1. Spicy Chickpea Stir Fry
+- Ingredients: chickpeas, bell pepper, onion, garlic, olive oil, soy sauce, chili flakes
+- Diet: Vegan
+- Instructions: Heat olive oil in a pan, sauté garlic and onion, then add bell peppers. Stir in chickpeas, soy sauce, and chili flakes. Cook for 8–10 minutes. Serve hot.
+- Prep Time: 15 minutes
+- Calories: 320
+
+2. Creamy Garlic Chicken Pasta
+- Ingredients: chicken breast, garlic, cream, pasta, parmesan cheese, olive oil, salt, pepper
+- Diet: Non-Vegetarian
+- Instructions: Cook pasta. In a pan, cook chicken with garlic and olive oil. Add cream and cheese. Mix with pasta. Season with salt and pepper.
+- Prep Time: 25 minutes
+- Calories: 620
+
+3. Vegetable Fried Rice
+- Ingredients: rice, carrot, peas, onion, soy sauce, egg, ginger, garlic
+- Diet: Vegetarian
+- Instructions: Scramble eggs and set aside. Stir-fry vegetables in oil with ginger and garlic. Add cooked rice, soy sauce, and eggs. Stir well and serve.
+- Prep Time: 20 minutes
+- Calories: 450
+
+4. Avocado Toast with Poached Egg
+- Ingredients: bread, avocado, egg, lemon juice, salt, pepper, chili flakes
+- Diet: Vegetarian
+- Instructions: Toast the bread. Mash avocado with lemon juice, salt, and pepper. Spread on toast. Top with a poached egg and chili flakes.
+- Prep Time: 10 minutes
+- Calories: 280

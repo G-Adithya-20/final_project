@@ -8,7 +8,7 @@ if (!isset($_SESSION['username']) || !isset($_SESSION['role'])) {
     exit;
 }
 
-// Ensure only team members can access this page
+// Ensure only team members and teamlead can access this page
 if ($_SESSION['role'] != 'TeamMember' && $_SESSION['role'] != 'TeamLead') {
     echo "<script>window.location.href = 'error.php';</script>";
     exit;
@@ -19,6 +19,75 @@ if (!isset($_GET['discussion_id'])) {
     echo "<script>window.location.href = 'discussion.php';</script>";
     exit;
 }
+
+// Handle new message submission
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_GET['discussion_id'])) {
+    $discussion_id = (int)$_GET['discussion_id'];
+    $username = $_SESSION['username'];
+    $message = trim($_POST['chat_msg']);
+    
+    if (empty($message)) {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'error' => 'Message cannot be empty']);
+        exit;
+    }
+    
+    // Insert message into database
+    $stmt = $conn->prepare("INSERT INTO chat (discussion_id, username, chat_msg) VALUES (?, ?, ?)");
+    $stmt->bind_param("iss", $discussion_id, $username, $message);
+    
+    if ($stmt->execute()) {
+        $message_id = $stmt->insert_id;
+        
+        // Get the newly inserted message
+        $stmt = $conn->prepare("SELECT chat_id, username, chat_msg, time FROM chat WHERE chat_id = ?");
+        $stmt->bind_param("i", $message_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $new_message = $result->fetch_assoc();
+        
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => true,
+            'message' => [
+                'chat_id' => $new_message['chat_id'],
+                'username' => $new_message['username'],
+                'chat_msg' => $new_message['chat_msg'],
+                'time' => date('g:i A', strtotime($new_message['time']))
+            ]
+        ]);
+    } else {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'error' => 'Database error']);
+    }
+    exit;
+}
+
+// Handle fetching new messages
+if (isset($_GET['action']) && $_GET['action'] == 'fetch_new_messages' && isset($_GET['discussion_id']) && isset($_GET['last_id'])) {
+    $discussion_id = (int)$_GET['discussion_id'];
+    $last_id = (int)$_GET['last_id'];
+    
+    $stmt = $conn->prepare("SELECT chat_id, username, chat_msg, time FROM chat WHERE discussion_id = ? AND chat_id > ? ORDER BY time ASC");
+    $stmt->bind_param("ii", $discussion_id, $last_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    $messages = [];
+    while ($row = $result->fetch_assoc()) {
+        $messages[] = [
+            'chat_id' => $row['chat_id'],
+            'username' => $row['username'],
+            'chat_msg' => $row['chat_msg'],
+            'time' => date('g:i A', strtotime($row['time']))
+        ];
+    }
+    
+    header('Content-Type: application/json');
+    echo json_encode($messages);
+    exit;
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -498,31 +567,54 @@ if (!isset($_GET['discussion_id'])) {
             scrollToBottom();
 
             // Handle form submission
-            chatForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                const formData = new FormData(chatForm);
-                
-                fetch(`chat_page.php?discussion_id=${discussionId}`, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        addMessageToChat(data.message, true);
-                        chatForm.reset();
-                        scrollToBottom();
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    // Fallback to traditional form submission
-                    chatForm.submit();
-                });
-            });
+           // Update the form submission handler
+chatForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(chatForm);
+    const messageInput = chatForm.querySelector('textarea');
+    
+    fetch(`chat_page.php?discussion_id=${discussionId}`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            // Add the new message to the chat
+            addMessageToChat({
+                chat_id: data.message.chat_id,
+                username: currentUsername,
+                chat_msg: messageInput.value,
+                time: data.message.time
+            }, true);
+            
+            // Clear the input and focus it
+            messageInput.value = '';
+            messageInput.focus();
+            
+            // Update last message ID
+            lastMessageId = data.message.chat_id;
+            
+            // Scroll to bottom
+            scrollToBottom();
+        } else {
+            console.error('Error:', data.error);
+            alert('Failed to send message: ' + (data.error || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to send message. Please try again.');
+    });
+});
 
             // Fetch new messages periodically
             setInterval(fetchNewMessages, 1000);

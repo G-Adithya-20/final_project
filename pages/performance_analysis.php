@@ -71,7 +71,7 @@ $total_not_viewed = array_sum(array_column($performance_data, 'not_viewed_tasks'
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Team Performance Analysis</title>
+    <title>Individual Performance Analysis</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -405,7 +405,7 @@ $total_not_viewed = array_sum(array_column($performance_data, 'not_viewed_tasks'
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-8">
-                    <h1 class="fw-bold mb-2">Team Performance Analysis</h1>
+                    <h1 class="fw-bold mb-2">Individual Performance Analysis</h1>
                     <p class="mb-0 opacity-75">Track, measure, and optimize your team's productivity</p>
                 </div>
                 <div class="col-md-4 text-md-end mt-3 mt-md-0">

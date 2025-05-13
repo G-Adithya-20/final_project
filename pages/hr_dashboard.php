@@ -735,7 +735,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'HR') {
                             <div class="feature-icon stat-info">
                                 <i class="fas fa-user-check"></i>
                             </div>
-                            <h5 class="feature-title">Performance Insights</h5>
+                            <h5 class="feature-title">Individual Performance Insights</h5>
                             <p class="feature-text">Review and assess team members contributions.</p>
                             <a href="performance_analysis.php" class="feature-link">
                                 Explore Insights <i class="fas fa-arrow-right ms-2 arrow-icon"></i>
